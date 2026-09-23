@@ -807,7 +807,7 @@
             days: {},
             months: {},
             years: {},
-            transactions: [] // Lưu trữ chi tiết từng hóa đơn
+            transactions: []
         };
 
         let currentCategory = "Boeuf";
@@ -1083,6 +1083,7 @@
             const month = year + '-' + String(now.getMonth() + 1).padStart(2, '0');
             const day = month + '-' + String(now.getDate()).padStart(2, '0');
             const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+            const uniqueId = Date.now() + Math.random(); // ID duy nhất cho hóa đơn
 
             salesData.days[day] = (salesData.days[day] || 0) + subTotal;
             salesData.months[month] = (salesData.months[month] || 0) + subTotal;
@@ -1090,7 +1091,10 @@
 
             if (!salesData.transactions) salesData.transactions = [];
             salesData.transactions.push({
+                id: uniqueId,
                 day: day,
+                month: month,
+                year: year,
                 time: timeStr,
                 table: currentTable,
                 total: subTotal,
@@ -1147,22 +1151,68 @@
                 return;
             }
 
-            todayTrans.reverse().forEach((tx, idx) => {
+            todayTrans.reverse().forEach((tx) => {
                 const itemsSummary = tx.items.map(i => `${i.name} (x${i.qty})`).join(', ');
                 const div = document.createElement('div');
                 div.className = 'transaction-item';
                 div.innerHTML = `
-                    <div>
+                    <div style="flex: 1; padding-right: 10px;">
                         <div style="font-weight: 900; color: #2d3748;">🕒 ${tx.time} - <span style="color: #3182ce;">${tx.table}</span></div>
                         <div style="font-size: 12px; color: #4a5568; margin-top: 2px;">${itemsSummary} ${tx.surcharge > 0 ? `+ Phụ thu: ${tx.surcharge.toFixed(2)}€` : ''}</div>
                     </div>
-                    <div style="font-weight: 900; font-size: 16px; color: #dd6b20;">${tx.total.toFixed(2)} €</div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="font-weight: 900; font-size: 16px; color: #dd6b20; white-space: nowrap;">${tx.total.toFixed(2)} €</div>
+                        <button class="btn-danger" onclick="deleteTransaction('${tx.id}')" title="Supprimer cette facture">🗑️</button>
+                    </div>
                 `;
                 container.appendChild(div);
             });
         }
 
+        function deleteTransaction(txId) {
+            const pin = prompt("Veuillez entrer le code PIN pour supprimer cette facture (Code par défaut: 1234):");
+            if (pin === null) return; // Nhấn hủy
+            if (pin !== "1234") {
+                alert("Code PIN incorrect ! Suppression annulée.");
+                return;
+            }
+
+            const txIndex = salesData.transactions.findIndex(t => t.id == txId);
+            if (txIndex === -1) return;
+
+            const tx = salesData.transactions[txIndex];
+
+            // Trừ lại doanh thu của ngày, tháng, năm tương ứng
+            if (salesData.days[tx.day]) {
+                salesData.days[tx.day] -= tx.total;
+                if (salesData.days[tx.day] < 0) salesData.days[tx.day] = 0;
+            }
+            if (salesData.months[tx.month]) {
+                salesData.months[tx.month] -= tx.total;
+                if (salesData.months[tx.month] < 0) salesData.months[tx.month] = 0;
+            }
+            if (salesData.years[tx.year]) {
+                salesData.years[tx.year] -= tx.total;
+                if (salesData.years[tx.year] < 0) salesData.years[tx.year] = 0;
+            }
+
+            // Xóa khỏi mảng giao dịch
+            salesData.transactions.splice(txIndex, 1);
+            localStorage.setItem('restaurant_sales', JSON.stringify(salesData));
+
+            // Cập nhật lại giao diện Stats
+            updateStatsUI();
+            alert("La facture a été supprimée avec succès et le chiffre d'affaires a été mis à jour.");
+        }
+
         function resetStats() {
+            const pin = prompt("Veuillez entrer le code PIN pour réinitialiser toutes les statistiques (Code par défaut: 1234):");
+            if (pin === null) return;
+            if (pin !== "1234") {
+                alert("Code PIN incorrect !");
+                return;
+            }
+
             if (confirm("Voulez-vous vraiment réinitialiser toutes les statistiques et l'historique des factures ?")) {
                 salesData = { days: {}, months: {}, years: {}, transactions: [] };
                 localStorage.removeItem('restaurant_sales');
