@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caisse Enregistreuse - Restaurant Pro</title>
+    <style>
+        :root {
+            --font-size-base: 15px;
+            --font-weight-bold: 700;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: var(--font-size-base);
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: #edf2f7;
+            color: #1a202c;
+            overflow: hidden;
+            font-weight: 600; /* Làm đậm chữ toàn bộ hệ thống */
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 95px;
+            background-color: #1a202c;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .sidebar-btn {
+            width: 75px;
+            height: 75px;
+            background-color: #2d3748;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .sidebar-btn:hover, .sidebar-btn.active {
+            background-color: #3182ce;
+        }
+
+        .sidebar-btn span {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            display: flex;
+            height: 100%;
+        }
+
+        /* Views */
+        .view-section {
+            flex: 1.3;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            border-right: 2px solid #cbd5e0;
+            background: #fff;
+            overflow-y: auto;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Menu & Categories */
+        .categories {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .cat-btn {
+            padding: 14px 24px;
+            background-color: #e2e8f0;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+            color: #2d3748;
+            transition: 0.2s;
+        }
+
+        .cat-btn.active, .cat-btn:hover {
+            background-color: #2b6cb0;
+            color: white;
+        }
+
+        .products-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            align-content: start;
+        }
+
+        .product-card {
+            background: #fff;
+            border: 3px solid #cbd5e0;
+            border-radius: 14px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 125px;
+            transition: 0.15s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .product-card:hover {
+            border-color: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(49, 130, 206, 0.2);
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: #1a202c;
+        }
+
+        .product-price {
+            font-size: 18px;
+            color: #dd6b20;
+            font-weight: 900;
+        }
+
+        /* Admin Form */
+        .admin-header {
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: #1a202c;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 800;
+            font-size: 15px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #a0aec0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .admin-table th, .admin-table td {
+            padding: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .admin-table th {
+            background-color: #edf2f7;
+            font-weight: 900;
+        }
+
+        .btn-danger {
+            background-color: #fed7d7;
+            color: #c53030;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 900;
+        }
+        .btn-danger:hover { background-color: #feb2b2; }
+
+        .btn-primary {
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 900;
+            font-size: 16px;
+        }
+        .btn-primary:hover { background-color: #2b6cb0; }
+
+        /* Ticket Section */
+        .ticket-section {
+            width: 450px;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -4px 0 15px rgba(0,0,0,0.05);
+        }
+
+        .ticket-header {
+            padding: 20px;
+            background-color: #edf2f7;
+            border-bottom: 2px solid #cbd5e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ticket-header h2 {
+            font-size: 20px;
+            font-weight: 900;
+            color: #1a202c;
+        }
+
+        .table-badge {
+            background-color: #3182ce;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .ticket-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .ticket-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 2px dashed #e2e8f0;
+        }
+
+        .item-info { flex: 1; }
+        .item-name { font-size: 15px; font-weight: 900; color: #1a202c; }
+        .item-sub { font-size: 13px; font-weight: 700; color: #4a5568; }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+        }
+
+        .qty-btn {
+            width: 32px;
+            height: 32px;
+            background: #cbd5e0;
+            border: none;
+            border-radius: 6px;
+            font-weight: 900;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .qty-btn:hover { background: #a0aec0; }
+
+        .item-total {
+            font-weight: 900;
+            font-size: 16px;
+            width: 70px;
+            text-align: right;
+            color: #2d3748;
+        }
+
+        .ticket-summary {
+            padding: 20px;
+            background-color: #edf2f7;
+            border-top: 2px solid #cbd5e0;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 15px;
+            font-weight: 800;
+            color: #4a5568;
+        }
+
+        .summary-row.total {
+            font-size: 22px;
+            font-weight: 900;
+            color: #000;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #a0aec0;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-cancel { background-color: #fed7d7; color: #c53030; }
+        .btn-print { background-color: #bee3f8; color: #2b6cb0; }
+        .btn-pay { background-color: #48bb78; color: white; grid-column: span 2; }
+        .btn-pay:hover { background-color: #38a169; }
+
+        /* Font Control Toolbar inside Summary */
+        .font-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid #cbd5e0;
+            font-size: 13px;
+        }
+        .font-btn {
+            padding: 5px 10px;
+            background: #cbd5e0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .font-btn:hover { background: #a0aec0; }
+
+        /* Modal Table Selector */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 420px;
+            text-align: center;
+        }
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .table-opt {
+            padding: 18px;
+            background: #edf2f7;
+            border: 3px solid #cbd5e0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 900;
+            font-size: 16px;
+        }
+        .table-opt:hover { background: #3182ce; color: white; border-color: #3182ce; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <button class="sidebar-btn active" id="navCaisse" onclick="switchView('caisse')">
+            <span>🛒</span> Caisse
+        </button>
+        <button class="sidebar-btn" id="navAdmin" onclick="switchView('admin')">
+            <span>⚙️</span> Menu
+        </button>
+        <button class="sidebar-btn" onclick="openTableModal()">
+            <span>🪑</span> Tables
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        
+        <!-- View 1: Caisse -->
+        <div class="view-section" id="caisseView">
+            <div class="categories" id="categoryContainer"></div>
+            <div class="products-grid" id="productContainer"></div>
+        </div>
+
+        <!-- View 2: Admin Menu Management -->
+        <div class="view-section hidden" id="adminView">
+            <div class="admin-header">Gestion du Menu (Thêm / Sửa món ăn)</div>
+            <div class="form-group">
+                <label>Tên món ăn</label>
+                <input type="text" id="newProdName" placeholder="Ví dụ: Pizza Margherita">
+            </div>
+            <div class="form-group">
+                <label>Danh mục</label>
+                <select id="newProdCat">
+                    <option value="Entrées">Entrées</option>
+                    <option value="Plats">Plats</option>
+                    <option value="Desserts">Desserts</option>
+                    <option value="Boissons">Boissons</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Giá tiền (€)</label>
+                <input type="number" step="0.1" id="newProdPrice" placeholder="12.50">
+            </div>
+            <button class="btn-primary" onclick="addProduct()">Ajouter le produit</button>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Catégorie</th>
+                        <th>Prix</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Ticket Section -->
+        <div class="ticket-section">
+            <div class="ticket-header">
+                <h2>Addition</h2>
+                <div class="table-badge" id="currentTableDisplay" onclick="openTableModal()">Table 01</div>
+            </div>
+
+            <div class="ticket-items" id="ticketItemsContainer"></div>
+
+            <div class="ticket-summary">
+                <div class="summary-row">
+                    <span>Total HT</span>
+                    <span id="subTotal">0,00 €</span>
+                </div>
+                <div class="summary-row">
+                    <span>TVA (10%)</span>
+                    <span id="taxAmount">0,00 €</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total TTC</span>
+                    <span id="grandTotal">0,00 €</span>
+                </div>
+
+                <!-- Nút chỉnh cỡ chữ trực tiếp -->
+                <div class="font-controls">
+                    <span>Cỡ chữ:</span>
+                    <button class="font-btn" onclick="changeFontSize(-1)">Chữ Nhỏ (-)</button>
+                    <button class="font-btn" onclick="changeFontSize(1)">Chữ To (+)</button>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-cancel" onclick="clearTicket()">Annuler</button>
+                    <button class="btn btn-print" onclick="printTicket()">Imprimer</button>
+                    <button class="btn btn-pay" onclick="processPayment()">Encaisser (Paiement)</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal chọn bàn -->
+    <div class="modal" id="tableModal">
+        <div class="modal-content">
+            <h3 style="font-size: 20px; font-weight: 900;">Sélectionner une table</h3>
+            <div class="tables-grid">
+                <div class="table-opt" onclick="selectTable('Table 01')">Table 01</div>
+                <div class="table-opt" onclick="selectTable('Table 02')">Table 02</div>
+                <div class="table-opt" onclick="selectTable('Table 03')">Table 03</div>
+                <div class="table-opt" onclick="selectTable('Table 04')">Table 04</div>
+                <div class="table-opt" onclick="selectTable('Table 05')">Table 05</div>
+                <div class="table-opt" onclick="selectTable('Terrasse 1')">Terrasse 1</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let menuData = {
+            "Entrées": [
+                { id: 1, name: "Salade César", price: 9.50 },
+                { id: 2, name: "Soupe à l'oignon", price: 8.00 }
+            ],
+            "Plats": [
+                { id: 5, name: "Entrecôte frites", price: 19.90 },
+                { id: 8, name: "Burger Maison", price: 15.00 }
+            ],
+            "Desserts": [
+                { id: 10, name: "Crème brûlée", price: 7.00 }
+            ],
+            "Boissons": [
+                { id: 14, name: "Coca-Cola 33cl", price: 4.00 }
+            ]
+        };
+
+        let currentCategory = "Entrées";
+        let currentTable = "Table 01";
+        let currentTicket = [];
+        let currentFontSize = 15;
+
+        // Thay đổi cỡ chữ linh hoạt
+        function changeFontSize(delta) {
+            currentFontSize += delta;
+            if (currentFontSize < 13) currentFontSize = 13;
+            if (currentFontSize > 22) currentFontSize = 22;
+            document.documentElement.style.setProperty('--font-size-base', currentFontSize + 'px');
+        }
+
+        function switchView(view) {
+            document.getElementById('caisseView').classList.add('hidden');
+            document.getElementById('adminView').classList.add('hidden');
+            document.getElementById('navCaisse').classList.remove('active');
+            document.getElementById('navAdmin').classList.remove('active');
+
+            if (view === 'caisse') {
+                document.getElementById('caisseView').classList.remove('hidden');
+                document.getElementById('navCaisse').classList.add('active');
+                initMenu();
+            } else {
+                document.getElementById('adminView').classList.remove('hidden');
+                document.getElementById('navAdmin').classList.add('active');
+                initAdminTable();
+            }
+        }
+
+        function initMenu() {
+            const catContainer = document.getElementById('categoryContainer');
+            catContainer.innerHTML = '';
+            
+            Object.keys(menuData).forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `cat-btn ${cat === currentCategory ? 'active' : ''}`;
+                btn.innerText = cat;
+                btn.onclick = () => {
+                    currentCategory = cat;
+                    initMenu();
+                };
+                catContainer.appendChild(btn);
+            });
+
+            const prodContainer = document.getElementById('productContainer');
+            prodContainer.innerHTML = '';
+            
+            if (menuData[currentCategory]) {
+                menuData[currentCategory].forEach(prod => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.innerHTML = `
+                        <div class="product-name">${prod.name}</div>
+                        <div class="product-price">${prod.price.toFixed(2)} €</div>
+                    `;
+                    card.onclick = () => addToTicket(prod);
+                    prodContainer.appendChild(card);
+                });
+            }
+        }
+
+        function addProduct() {
+            const name = document.getElementById('newProdName').value;
+            const cat = document.getElementById('newProdCat').value;
+            const price = parseFloat(document.getElementById('newProdPrice').value);
+
+            if (!name || isNaN(price)) {
+                alert("Veuillez remplir correctement tous les champs !");
+                return;
+            }
+
+            const newId = Date.now();
+            if (!menuData[cat]) menuData[cat] = [];
+            menuData[cat].push({ id: newId, name, price });
+
+            document.getElementById('newProdName').value = '';
+            document.getElementById('newProdPrice').value = '';
+            initAdminTable();
+            alert("Produit ajouté avec succès !");
+        }
+
+        function initAdminTable() {
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '';
+
+            Object.keys(menuData).forEach(cat => {
+                menuData[cat].forEach(prod => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${prod.name}</td>
+                        <td>${cat}</td>
+                        <td>${prod.price.toFixed(2)} €</td>
+                        <td><button class="btn-danger" onclick="deleteProduct('${cat}', ${prod.id})">Supprimer</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+        }
+
+        function deleteProduct(cat, id) {
+            menuData[cat] = menuData[cat].filter(p => p.id !== id);
+            initAdminTable();
+        }
+
+        function addToTicket(product) {
+            const existingItem = currentTicket.find(item => item.id === product.id);
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                currentTicket.push({ ...product, qty: 1 });
+            }
+            updateTicketUI();
+        }
+
+        function changeQty(id, delta) {
+            const item = currentTicket.find(i => i.id === id);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) {
+                    currentTicket = currentTicket.filter(i => i.id !== id);
+                }
+            }
+            updateTicketUI();
+        }
+
+        function updateTicketUI() {
+            const container = document.getElementById('ticketItemsContext') || document.getElementById('ticketItemsContainer');
+            container.innerHTML = '';
+
+            let subTotal = 0;
+
+            currentTicket.forEach(item => {
+                const itemTotal = item.price * item.qty;
+                subTotal += itemTotal;
+
+                const el = document.createElement('div');
+                el.className = 'ticket-item';
+                el.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-sub">${item.price.toFixed(2)} € x ${item.qty}</div>
+                    </div>
+                    <div class="item-controls">
+                        <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
+                        <span style="font-weight:900">${item.qty}</span>
+                        <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                    </div>
+                    <div class="item-total">${itemTotal.toFixed(2)} €</div>
+                `;
+                container.appendChild(el);
+            });
+
+            let tax = subTotal - (subTotal / 1.10);
+            let grandTotal = subTotal;
+
+            document.getElementById('subTotal').innerText = (subTotal - tax).toFixed(2) + ' €';
+            document.getElementById('taxAmount').innerText = tax.toFixed(2) + ' €';
+            document.getElementById('grandTotal').innerText = grandTotal.toFixed(2) + ' €';
+        }
+
+        function clearTicket() {
+            if (confirm("Voulez-vous vraiment annuler cette addition ?")) {
+                currentTicket = [];
+                updateTicketUI();
+            }
+        }
+
+        function printTicket() {
+            if (currentTicket.length === 0) {
+                alert("L'addition est vide, rien à imprimer !");
+                return;
+            }
+            window.print();
+        }
+
+        function processPayment() {
+            if (currentTicket.length === 0) {
+                alert("L'addition est vide !");
+                return;
+            }
+            const total = document.getElementById('grandTotal').innerText;
+            alert(`Paiement de ${total} validé avec succès !`);
+            currentTicket = [];
+            updateTicketUI();
+        }
+
+        function openTableModal() {
+            document.getElementById('tableModal').style.display = 'flex';
+        }
+
+        function selectTable(tableName) {
+            currentTable = tableName;
+            document.getElementById('currentTableDisplay').innerText = tableName;
+            document.getElementById('tableModal').style.display = 'none';
+        }
+
+        // Chạy khởi tạo lần đầu
+        initMenu();
+    </script>
+</body>
+</html>
