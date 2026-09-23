@@ -267,7 +267,7 @@
 
         /* Ticket Section */
         .ticket-section {
-            width: 450px;
+            width: 460px;
             background-color: #fff;
             display: flex;
             flex-direction: column;
@@ -275,7 +275,7 @@
         }
 
         .ticket-header {
-            padding: 20px;
+            padding: 15px 20px;
             background-color: #edf2f7;
             border-bottom: 2px solid #cbd5e0;
             display: flex;
@@ -309,62 +309,92 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 2px dashed #e2e8f0;
         }
 
         .item-info { flex: 1; }
-        .item-name { font-size: 15px; font-weight: 900; color: #1a202c; }
-        .item-sub { font-size: 13px; font-weight: 700; color: #4a5568; }
+        .item-name { font-size: 14px; font-weight: 900; color: #1a202c; }
+        .item-sub { font-size: 12px; font-weight: 700; color: #4a5568; }
 
         .item-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-left: 10px;
+            gap: 6px;
+            margin-left: 8px;
         }
 
         .qty-btn {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             background: #cbd5e0;
             border: none;
             border-radius: 6px;
             font-weight: 900;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
         }
         .qty-btn:hover { background: #a0aec0; }
 
+        .delete-item-btn {
+            background: #fed7d7;
+            color: #c53030;
+            border: none;
+            border-radius: 6px;
+            width: 28px;
+            height: 28px;
+            font-weight: 900;
+            cursor: pointer;
+            margin-left: 4px;
+        }
+        .delete-item-btn:hover { background: #feb2b2; }
+
         .item-total {
             font-weight: 900;
-            font-size: 16px;
-            width: 70px;
+            font-size: 15px;
+            width: 65px;
             text-align: right;
             color: #2d3748;
         }
 
         .ticket-summary {
-            padding: 20px;
+            padding: 15px 20px;
             background-color: #edf2f7;
             border-top: 2px solid #cbd5e0;
         }
 
+        .surcharge-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .surcharge-btn {
+            flex: 1;
+            background-color: #e2e8f0;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            padding: 6px;
+            font-weight: 800;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .surcharge-btn:hover { background-color: #cbd5e0; }
+
         .summary-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 15px;
+            margin-bottom: 6px;
+            font-size: 14px;
             font-weight: 800;
             color: #4a5568;
         }
 
         .summary-row.total {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 900;
             color: #000;
-            margin-top: 10px;
-            padding-top: 10px;
+            margin-top: 8px;
+            padding-top: 8px;
             border-top: 2px solid #a0aec0;
         }
 
@@ -372,14 +402,14 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 12px;
         }
 
         .btn {
-            padding: 14px;
+            padding: 12px;
             border: none;
             border-radius: 10px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 900;
             cursor: pointer;
             text-align: center;
@@ -394,13 +424,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 12px;
-            padding-top: 10px;
+            margin-top: 10px;
+            padding-top: 8px;
             border-top: 1px solid #cbd5e0;
             font-size: 13px;
         }
         .font-btn {
-            padding: 5px 10px;
+            padding: 4px 8px;
             background: #cbd5e0;
             border: none;
             border-radius: 5px;
@@ -571,6 +601,13 @@
             <div class="ticket-items" id="ticketItemsContainer"></div>
 
             <div class="ticket-summary">
+                <!-- Nút cộng tiền phát sinh nhanh -->
+                <div class="surcharge-container">
+                    <button class="surcharge-btn" onclick="addSurcharge(1)">+ 1.00 € (Phụ thu)</button>
+                    <button class="surcharge-btn" onclick="addSurcharge(2)">+ 2.00 € (Phụ thu)</button>
+                    <button class="surcharge-btn" onclick="resetSurcharge()" style="color: #c53030;">Xóa phụ thu</button>
+                </div>
+
                 <div class="summary-row">
                     <span>Total HT</span>
                     <span id="subTotal">0,00 €</span>
@@ -591,7 +628,7 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn btn-cancel" onclick="clearTicket()">Annuler</button>
+                    <button class="btn btn-cancel" onclick="clearTicket()">Annuler tout</button>
                     <button class="btn btn-print" onclick="printTicket()">Imprimer</button>
                     <button class="btn btn-pay" onclick="processPayment()">Encaisser (Paiement)</button>
                 </div>
@@ -626,7 +663,6 @@
     </div>
 
     <script>
-        // Cập nhật chuẩn xác toàn bộ dữ liệu thực đơn từ Restaurant Vietnamien Tournon
         let menuData = {
             "Boeuf": [
                 { id: 1, name: "Bœuf au saté", price: 9.90 },
@@ -735,6 +771,7 @@
         let currentCategory = "Boeuf";
         let currentTable = "Table 01";
         let currentTicket = [];
+        let surchargeAmount = 0;
         let currentFontSize = 15;
 
         function changeFontSize(delta) {
@@ -757,7 +794,6 @@
                 document.getElementById('navCaisse').classList.add('active');
                 initMenu();
             } else if (view === 'admin') {
-                document.getElementById('adminView').classList.add('hidden'); // keep admin safe or active
                 document.getElementById('adminView').classList.remove('hidden');
                 document.getElementById('navAdmin').classList.add('active');
                 initAdminTable();
@@ -884,6 +920,21 @@
             updateTicketUI();
         }
 
+        function removeTicketItem(id) {
+            currentTicket = currentTicket.filter(i => i.id !== id);
+            updateTicketUI();
+        }
+
+        function addSurcharge(amount) {
+            surchargeAmount += amount;
+            updateTicketUI();
+        }
+
+        function resetSurcharge() {
+            surchargeAmount = 0;
+            updateTicketUI();
+        }
+
         function updateTicketUI() {
             const container = document.getElementById('ticketItemsContainer');
             container.innerHTML = '';
@@ -905,23 +956,34 @@
                         <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
                         <span style="font-weight:900">${item.qty}</span>
                         <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                        <button class="delete-item-btn" onclick="removeTicketItem(${item.id})" title="Supprimer ce plat">✕</button>
                     </div>
                     <div class="item-total">${itemTotal.toFixed(2)} €</div>
                 `;
                 container.appendChild(el);
             });
 
+            // Cộng thêm tiền phụ thu vào tổng phụ
+            subTotal += surchargeAmount;
+
+            // Nếu có phụ thu, hiển thị dòng phụ thu trên hóa đơn tạm tính nếu cần hoặc gộp chung
             let tax = subTotal - (subTotal / 1.10);
             let grandTotal = subTotal;
 
-            document.getElementById('subTotal').innerText = (subTotal - tax).toFixed(2) + ' €';
+            let subTotalDisplay = subTotal - tax;
+            if (surchargeAmount > 0) {
+                // Hiển thị thêm thông báo nhỏ hoặc cộng thẳng
+            }
+
+            document.getElementById('subTotal').innerText = subTotalDisplay.toFixed(2) + ' €' + (surchargeAmount > 0 ? ` (inc. ${surchargeAmount.toFixed(2)}€)` : '');
             document.getElementById('taxAmount').innerText = tax.toFixed(2) + ' €';
             document.getElementById('grandTotal').innerText = grandTotal.toFixed(2) + ' €';
         }
 
         function clearTicket() {
-            if (confirm("Voulez-vous vraiment annuler cette addition ?")) {
+            if (confirm("Voulez-vous vraiment annuler toute cette addition ?")) {
                 currentTicket = [];
+                surchargeAmount = 0;
                 updateTicketUI();
             }
         }
@@ -945,6 +1007,15 @@
                     <span>${t.toFixed(2)} €</span>
                 </div>`;
             });
+
+            if (surchargeAmount > 0) {
+                subTotal += surchargeAmount;
+                itemsHTML += `<div style="display:flex; justify-content:space-between;">
+                    <span>Frais / Suppléments</span>
+                    <span>${surchargeAmount.toFixed(2)} €</span>
+                </div>`;
+            }
+
             document.getElementById('printReceiptItems').innerHTML = itemsHTML;
 
             let tax = subTotal - (subTotal / 1.10);
@@ -956,7 +1027,7 @@
         }
 
         function printTicket() {
-            if (currentTicket.length === 0) {
+            if (currentTicket.length === 0 && surchargeAmount === 0) {
                 alert("L'addition est vide, rien à imprimer !");
                 return;
             }
@@ -965,12 +1036,12 @@
         }
 
         function processPayment() {
-            if (currentTicket.length === 0) {
+            if (currentTicket.length === 0 && surchargeAmount === 0) {
                 alert("L'addition est vide !");
                 return;
             }
 
-            let subTotal = currentTicket.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let subTotal = currentTicket.reduce((sum, item) => sum + (item.price * item.qty), 0) + surchargeAmount;
             
             const now = new Date();
             const year = now.getFullYear().toString();
@@ -987,7 +1058,9 @@
             alert(`Paiement de ${total} validé avec succès et enregistré dans les statistiques !`);
             
             currentTicket = [];
+            surchargeAmount = 0;
             updateTicketUI();
+            switchView('caisse');
         }
 
         function updateStatsUI() {
