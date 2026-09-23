@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caisse Enregistreuse - Restaurant Pro & Stats</title>
+    <title>Caisse Enregistreuse - Restaurant Vietnamien</title>
     <style>
         :root {
             --font-size-base: 15px;
@@ -115,7 +115,7 @@
         .products-grid {
             flex: 1;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 15px;
             align-content: start;
         }
@@ -124,13 +124,13 @@
             background: #fff;
             border: 3px solid #cbd5e0;
             border-radius: 14px;
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 125px;
+            height: 130px;
             transition: 0.15s;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
@@ -142,13 +142,14 @@
         }
 
         .product-name {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 800;
             color: #1a202c;
+            line-height: 1.2;
         }
 
         .product-price {
-            font-size: 18px;
+            font-size: 17px;
             color: #dd6b20;
             font-weight: 900;
         }
@@ -430,7 +431,7 @@
         }
         .table-opt:hover { background: #3182ce; color: white; border-color: #3182ce; }
 
-        /* PHẦN ĐẶC BIỆT CHỈ DÙNG KHI IN HÓA ĐƠN (PRINT TICKET) */
+        /* PHẦN ĐẶC BIỆT CHỈ DÙNG KHI IN HÓA ĐƠN */
         #printReceiptArea {
             display: none;
         }
@@ -488,7 +489,7 @@
             <div class="admin-header">Gestion du Menu (Thêm / Sửa món ăn)</div>
             <div class="form-group">
                 <label>Tên món ăn</label>
-                <input type="text" id="newProdName" placeholder="Ví dụ: Pizza Margherita">
+                <input type="text" id="newProdName" placeholder="Ví dụ: Bò Bún">
             </div>
             <div class="form-group">
                 <label>Danh mục</label>
@@ -579,9 +580,9 @@
 
     </div>
 
-    <!-- Hóa đơn chuẩn dùng riêng cho máy in (Chỉ hiện khi bấm in) -->
+    <!-- Hóa đơn chuẩn dùng riêng cho máy in -->
     <div id="printReceiptArea">
-        <div style="text-align: center; font-weight: bold; font-size: 18px;">RESTAURANT NHO</div>
+        <div style="text-align: center; font-weight: bold; font-size: 18px;">RESTAURANT VIETNAMIEN TOURNON</div>
         <div style="text-align: center; font-size: 12px; margin-bottom: 10px;">Caisse Enregistreuse Pro</div>
         <div id="printReceiptMeta" style="font-size: 12px; margin-bottom: 10px; border-bottom: 1px dashed black; padding-bottom: 5px;"></div>
         <div id="printReceiptItems" style="font-size: 13px; margin-bottom: 10px;"></div>
@@ -605,28 +606,56 @@
     </div>
 
     <script>
+        // Thực đơn chuẩn tích hợp từ trang web của quán tại Tournon
         let menuData = {
             "Entrées": [
-                { id: 1, name: "Salade César", price: 9.50 },
-                { id: 2, name: "Soupe à l'oignon", price: 8.00 }
+                { id: 1, name: "Nems au porc (4p)", price: 6.00 },
+                { id: 2, name: "Nems Maison (3p)", price: 5.80 },
+                { id: 3, name: "Nems aux crevettes (5p)", price: 5.80 },
+                { id: 4, name: "Samoussas (3p)", price: 5.80 },
+                { id: 5, name: "Tempura aux crevettes (7p)", price: 5.50 },
+                { id: 6, name: "Raviolis frits (5p)", price: 5.80 },
+                { id: 7, name: "Raviolis porc & crevettes vapeur", price: 5.80 },
+                { id: 8, name: "Salade crevettes", price: 7.50 },
+                { id: 9, name: "Salade porc laqué", price: 7.50 },
+                { id: 10, name: "Salade bœuf", price: 7.50 },
+                { id: 11, name: "Salade poulet", price: 7.50 },
+                { id: 12, name: "Assiette Assortie", price: 9.50 }
             ],
             "Plats": [
-                { id: 5, name: "Entrecôte frites", price: 19.90 },
-                { id: 8, name: "Burger Maison", price: 15.00 }
+                { id: 20, name: "Porc au caramel", price: 9.00 },
+                { id: 21, name: "Porc au curry", price: 9.00 },
+                { id: 22, name: "Poulet au caramel", price: 9.00 },
+                { id: 23, name: "Poulet au curry", price: 9.00 },
+                { id: 24, name: "Poulet à la citronnelle", price: 9.00 },
+                { id: 25, name: "Bœuf aux oignons", price: 9.90 },
+                { id: 26, name: "Bœuf au saté", price: 9.90 },
+                { id: 27, name: "Bœuf à la citronnelle", price: 9.90 },
+                { id: 28, name: "Crevettes au curry", price: 9.90 },
+                { id: 29, name: "Crevettes aigre-doux", price: 9.90 },
+                { id: 30, name: "Canard laqué", price: 9.90 },
+                { id: 31, name: "Nouilles sautées bœuf", price: 11.50 },
+                { id: 32, name: "Riz cantonnais", price: 4.00 }
             ],
             "Desserts": [
-                { id: 10, name: "Crème brûlée", price: 7.00 }
+                { id: 40, name: "Beignet de banane", price: 4.50 },
+                { id: 41, name: "Beignet de pomme", price: 4.50 },
+                { id: 42, name: "Beignet d'ananas", price: 4.50 },
+                { id: 43, name: "Nougats mou", price: 3.50 },
+                { id: 44, name: "Gingembre confit", price: 3.50 }
             ],
             "Boissons": [
-                { id: 14, name: "Coca-Cola 33cl", price: 4.00 }
+                { id: 50, name: "Coca-Cola 33cl", price: 4.00 },
+                { id: 51, name: "Bière Asiatique", price: 4.50 },
+                { id: 52, name: "Eau minérale 50cl", price: 3.00 },
+                { id: 53, name: "Thé / Café", price: 2.50 }
             ]
         };
 
-        // Biến lưu dữ liệu doanh thu (được lưu tự động vào trình duyệt)
         let salesData = JSON.parse(localStorage.getItem('restaurant_sales')) || {
-            days: {}, // format: {"2026-06-06": 150.50}
-            months: {}, // format: {"2026-06": 1200.00}
-            years: {} // format: {"2026": 15000.00}
+            days: {},
+            months: {},
+            years: {}
         };
 
         let currentCategory = "Entrées";
@@ -802,7 +831,6 @@
             }
         }
 
-        // Chuẩn bị nội dung hóa đơn khi bấm in
         function preparePrintReceipt() {
             const now = new Date();
             const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
@@ -841,7 +869,6 @@
             window.print();
         }
 
-        // Thanh toán và tự động lưu doanh thu vào Ngày, Tháng, Năm
         function processPayment() {
             if (currentTicket.length === 0) {
                 alert("L'addition est vide !");
@@ -850,18 +877,15 @@
 
             let subTotal = currentTicket.reduce((sum, item) => sum + (item.price * item.qty), 0);
             
-            // Lấy ngày tháng năm hiện tại dạng chuẩn YYYY-MM-DD và YYYY-MM và YYYY
             const now = new Date();
             const year = now.getFullYear().toString();
             const month = year + '-' + String(now.getMonth() + 1).padStart(2, '0');
             const day = month + '-' + String(now.getDate()).padStart(2, '0');
 
-            // Cộng dồn doanh thu
             salesData.days[day] = (salesData.days[day] || 0) + subTotal;
             salesData.months[month] = (salesData.months[month] || 0) + subTotal;
             salesData.years[year] = (salesData.years[year] || 0) + subTotal;
 
-            // Lưu vào bộ nhớ máy (localStorage)
             localStorage.setItem('restaurant_sales', JSON.stringify(salesData));
 
             const total = subTotal.toFixed(2) + ' €';
