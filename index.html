@@ -99,20 +99,17 @@
             display: flex;
             gap: 8px;
             margin-bottom: 10px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-            flex-wrap: wrap;
+            flex-wrap: wrap; /* Cho phép rớt dòng để thấy đủ các nút */
         }
 
         .cat-btn {
-            padding: 10px 18px;
+            padding: 10px 16px;
             background-color: #e2e8f0;
             border: none;
             border-radius: 10px;
             font-size: 14px;
             font-weight: 800;
             cursor: pointer;
-            white-space: nowrap;
             color: #2d3748;
             transition: 0.2s;
         }
@@ -120,6 +117,13 @@
         .cat-btn.active, .cat-btn:hover {
             background-color: #2b6cb0;
             color: white;
+        }
+
+        /* Nút Boissons nổi bật hẳn lên */
+        .cat-btn.boissons-highlight {
+            background-color: #3182ce;
+            color: white;
+            border: 2px solid #2b6cb0;
         }
 
         .products-grid {
@@ -550,11 +554,8 @@
         
         <!-- View 1: Caisse -->
         <div class="view-section" id="caisseView">
-            <div class="category-group-title">Plats (Boeuf, Poulet, Porc, Canard, Calamar, Crevettes)</div>
-            <div class="categories" id="categoryContainerPlats"></div>
-            
-            <div class="category-group-title">Entrées, Riz, Desserts & Boissons</div>
-            <div class="categories" id="categoryContainerOthers"></div>
+            <div class="category-group-title">🍹 Danh mục Đồ uống & Món ăn (Bấm để chọn)</div>
+            <div class="categories" id="categoryContainerAll"></div>
 
             <div class="products-grid" id="productContainer"></div>
         </div>
@@ -569,14 +570,14 @@
             <div class="form-group">
                 <label>Danh mục</label>
                 <select id="newProdCat">
-                    <option value="Boissons">Boissons</option>
-                    <option value="Entrées">Entrées</option>
-                    <option value="Boeuf">Boeuf</option>
-                    <option value="Poulet">Poulet</option>
-                    <option value="Porc">Porc</option>
-                    <option value="Canard">Canard</option>
-                    <option value="Calamar">Calamar</option>
-                    <option value="Crevettes">Crevettes</option>
+                    <option value="Boissons">Boissons (Đồ uống)</option>
+                    <option value="Entrées">Entrées (Khai vị)</option>
+                    <option value="Boeuf">Boeuf (Bò)</option>
+                    <option value="Poulet">Poulet (Gà)</option>
+                    <option value="Porc">Porc (Heo)</option>
+                    <option value="Canard">Canard (Vịt)</option>
+                    <option value="Calamar">Calamar (Mực)</option>
+                    <option value="Crevettes">Crevettes (Tôm)</option>
                     <option value="Riz & Accompagnements">Riz & Accompagnements</option>
                     <option value="Desserts">Desserts</option>
                 </select>
@@ -860,37 +861,26 @@
         }
 
         function initMenu() {
-            const platsCategories = ["Boissons", "Boeuf", "Poulet", "Porc", "Canard", "Calamar", "Crevettes"];
-            const othersCategories = ["Entrées", "Riz & Accompagnements", "Desserts"];
+            // Gom tất cả các danh mục, đưa Boissons lên đầu tiên
+            const allCategories = ["Boissons", "Entrées", "Boeuf", "Poulet", "Porc", "Canard", "Calamar", "Crevettes", "Riz & Accompagnements", "Desserts"];
 
-            const containerPlats = document.getElementById('categoryContainerPlats');
-            const containerOthers = document.getElementById('categoryContainerOthers');
-            containerPlats.innerHTML = '';
-            containerOthers.innerHTML = '';
+            const containerAll = document.getElementById('categoryContainerAll');
+            containerAll.innerHTML = '';
             
-            platsCategories.forEach(cat => {
+            allCategories.forEach(cat => {
                 if (menuData[cat]) {
                     const btn = document.createElement('button');
-                    btn.className = `cat-btn ${cat === currentCategory ? 'active' : ''}`;
-                    btn.innerText = cat;
+                    if (cat === "Boissons") {
+                        btn.className = `cat-btn boissons-highlight ${cat === currentCategory ? 'active' : ''}`;
+                    } else {
+                        btn.className = `cat-btn ${cat === currentCategory ? 'active' : ''}`;
+                    }
+                    btn.innerText = cat === "Boissons" ? "🥤 Boissons (Đồ uống)" : cat;
                     btn.onclick = () => {
                         currentCategory = cat;
                         initMenu();
                     };
-                    containerPlats.appendChild(btn);
-                }
-            });
-
-            othersCategories.forEach(cat => {
-                if (menuData[cat]) {
-                    const btn = document.createElement('button');
-                    btn.className = `cat-btn ${cat === currentCategory ? 'active' : ''}`;
-                    btn.innerText = cat;
-                    btn.onclick = () => {
-                        currentCategory = cat;
-                        initMenu();
-                    };
-                    containerOthers.appendChild(btn);
+                    containerAll.appendChild(btn);
                 }
             });
 
