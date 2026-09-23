@@ -217,29 +217,59 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .stat-card {
             background: #fff;
-            padding: 25px;
+            padding: 20px;
             border-radius: 12px;
             border: 3px solid #cbd5e0;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.02);
         }
 
+        .stat-card.clickable {
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .stat-card.clickable:hover {
+            border-color: #3182ce;
+            background-color: #ebf8ff;
+        }
+
         .stat-title {
-            font-size: 16px;
+            font-size: 15px;
             color: #4a5568;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 800;
         }
 
         .stat-value {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 900;
             color: #2b6cb0;
+        }
+
+        .transactions-container {
+            margin-top: 15px;
+            background: #fff;
+            border: 2px solid #cbd5e0;
+            border-radius: 12px;
+            padding: 15px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .transaction-item:last-child {
+            border-bottom: none;
         }
 
         .btn-danger {
@@ -574,9 +604,10 @@
             <div class="stats-header">Tableau de Bord - Chiffre d'Affaires</div>
             
             <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-title">📅 Hôm nay (Jour)</div>
+                <div class="stat-card clickable" onclick="toggleTodayDetails()">
+                    <div class="stat-title">📅 Hôm nay (Jour) 📋</div>
                     <div class="stat-value" id="statDay">0,00 €</div>
+                    <div style="font-size: 11px; color: #3182ce; margin-top: 5px; font-weight: bold;">(Bấm để xem chi tiết bill)</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">🗓️ Tháng này (Mois)</div>
@@ -588,7 +619,17 @@
                 </div>
             </div>
 
-            <button class="btn-danger" onclick="resetStats()" style="padding: 10px 20px; font-weight: bold;">Réinitialiser les statistiques</button>
+            <!-- Khung hiển thị danh sách hóa đơn trong ngày -->
+            <div id="todayDetailsSection" class="hidden">
+                <div style="font-weight: 900; font-size: 16px; margin-bottom: 8px; color: #2b6cb0;">Danh sách các hóa đơn đã thanh toán hôm nay:</div>
+                <div class="transactions-container" id="transactionsListContainer">
+                    <!-- Các dòng bill hiển thị ở đây -->
+                </div>
+            </div>
+
+            <div style="margin-top: 25px;">
+                <button class="btn-danger" onclick="resetStats()" style="padding: 10px 20px; font-weight: bold;">Réinitialiser les statistiques</button>
+            </div>
         </div>
 
         <!-- Ticket Section -->
@@ -765,7 +806,8 @@
         let salesData = JSON.parse(localStorage.getItem('restaurant_sales')) || {
             days: {},
             months: {},
-            years: {}
+            years: {},
+            transactions: [] // Lưu trữ chi tiết từng hóa đơn
         };
 
         let currentCategory = "Boeuf";
@@ -963,17 +1005,10 @@
                 container.appendChild(el);
             });
 
-            // Cộng thêm tiền phụ thu vào tổng phụ
             subTotal += surchargeAmount;
-
-            // Nếu có phụ thu, hiển thị dòng phụ thu trên hóa đơn tạm tính nếu cần hoặc gộp chung
             let tax = subTotal - (subTotal / 1.10);
             let grandTotal = subTotal;
-
             let subTotalDisplay = subTotal - tax;
-            if (surchargeAmount > 0) {
-                // Hiển thị thêm thông báo nhỏ hoặc cộng thẳng
-            }
 
             document.getElementById('subTotal').innerText = subTotalDisplay.toFixed(2) + ' €' + (surchargeAmount > 0 ? ` (inc. ${surchargeAmount.toFixed(2)}€)` : '');
             document.getElementById('taxAmount').innerText = tax.toFixed(2) + ' €';
@@ -1047,10 +1082,21 @@
             const year = now.getFullYear().toString();
             const month = year + '-' + String(now.getMonth() + 1).padStart(2, '0');
             const day = month + '-' + String(now.getDate()).padStart(2, '0');
+            const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
 
             salesData.days[day] = (salesData.days[day] || 0) + subTotal;
             salesData.months[month] = (salesData.months[month] || 0) + subTotal;
             salesData.years[year] = (salesData.years[year] || 0) + subTotal;
+
+            if (!salesData.transactions) salesData.transactions = [];
+            salesData.transactions.push({
+                day: day,
+                time: timeStr,
+                table: currentTable,
+                total: subTotal,
+                items: [...currentTicket],
+                surcharge: surchargeAmount
+            });
 
             localStorage.setItem('restaurant_sales', JSON.stringify(salesData));
 
@@ -1076,11 +1122,49 @@
             document.getElementById('statDay').innerText = dayRev.toFixed(2) + ' €';
             document.getElementById('statMonth').innerText = monthRev.toFixed(2) + ' €';
             document.getElementById('statYear').innerText = yearRev.toFixed(2) + ' €';
+
+            renderTodayTransactions(day);
+        }
+
+        function toggleTodayDetails() {
+            const section = document.getElementById('todayDetailsSection');
+            section.classList.toggle('hidden');
+        }
+
+        function renderTodayTransactions(day) {
+            const container = document.getElementById('transactionsListContainer');
+            container.innerHTML = '';
+
+            if (!salesData.transactions || salesData.transactions.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: #718096; padding: 15px;">Aucune transaction enregistrée.</div>`;
+                return;
+            }
+
+            const todayTrans = salesData.transactions.filter(t => t.day === day);
+
+            if (todayTrans.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: #718096; padding: 15px;">Aucune transaction aujourd'hui.</div>`;
+                return;
+            }
+
+            todayTrans.reverse().forEach((tx, idx) => {
+                const itemsSummary = tx.items.map(i => `${i.name} (x${i.qty})`).join(', ');
+                const div = document.createElement('div');
+                div.className = 'transaction-item';
+                div.innerHTML = `
+                    <div>
+                        <div style="font-weight: 900; color: #2d3748;">🕒 ${tx.time} - <span style="color: #3182ce;">${tx.table}</span></div>
+                        <div style="font-size: 12px; color: #4a5568; margin-top: 2px;">${itemsSummary} ${tx.surcharge > 0 ? `+ Phụ thu: ${tx.surcharge.toFixed(2)}€` : ''}</div>
+                    </div>
+                    <div style="font-weight: 900; font-size: 16px; color: #dd6b20;">${tx.total.toFixed(2)} €</div>
+                `;
+                container.appendChild(div);
+            });
         }
 
         function resetStats() {
-            if (confirm("Voulez-vous vraiment réinitialiser toutes les statistiques ?")) {
-                salesData = { days: {}, months: {}, years: {} };
+            if (confirm("Voulez-vous vraiment réinitialiser toutes les statistiques et l'historique des factures ?")) {
+                salesData = { days: {}, months: {}, years: {}, transactions: [] };
                 localStorage.removeItem('restaurant_sales');
                 updateStatsUI();
             }
