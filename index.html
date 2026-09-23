@@ -493,7 +493,7 @@
             <div class="category-group-title">Plats (Boeuf, Poulet, Porc, Canard, Calamar, Crevettes)</div>
             <div class="categories" id="categoryContainerPlats"></div>
             
-            <div class="category-group-title">Entrées, Accompagnements, Desserts & Boissons</div>
+            <div class="category-group-title">Entrées, Riz, Desserts & Boissons</div>
             <div class="categories" id="categoryContainerOthers"></div>
 
             <div class="products-grid" id="productContainer"></div>
@@ -516,14 +516,13 @@
                     <option value="Canard">Canard</option>
                     <option value="Calamar">Calamar</option>
                     <option value="Crevettes">Crevettes</option>
-                    <option value="Riz & Nouilles">Riz & Nouilles</option>
+                    <option value="Riz & Accompagnements">Riz & Accompagnements</option>
                     <option value="Desserts">Desserts</option>
-                    <option value="Boissons">Boissons</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>Giá tiền (€)</label>
-                <input type="number" step="0.1" id="newProdPrice" placeholder="10.50">
+                <input type="number" step="0.1" id="newProdPrice" placeholder="9.00">
             </div>
             <button class="btn-primary" onclick="addProduct()">Ajouter le produit</button>
 
@@ -627,83 +626,103 @@
     </div>
 
     <script>
-        // Cập nhật đầy đủ dữ liệu menu thực tế từ nhà hàng
+        // Cập nhật chuẩn xác toàn bộ dữ liệu thực đơn từ Restaurant Vietnamien Tournon
         let menuData = {
-            "Entrées": [
-                { id: 1, name: "Nems au porc (4p)", price: 6.00 },
-                { id: 2, name: "Nems Maison (3p)", price: 5.80 },
-                { id: 3, name: "Nems aux crevettes (4p)", price: 6.30 },
-                { id: 4, name: "Rouleau de printemps (2p)", price: 5.80 },
-                { id: 5, name: "Samoussas (3p)", price: 5.80 },
-                { id: 6, name: "Raviolis frits (5p)", price: 5.80 },
-                { id: 7, name: "Raviolis vapeur crevettes", price: 5.80 },
-                { id: 8, name: "Raviolis vapeur porc", price: 5.80 },
-                { id: 9, name: "Salade crevettes", price: 7.50 },
-                { id: 10, name: "Salade bœuf", price: 7.50 },
-                { id: 11, name: "Salade porc laqué", price: 7.50 }
-            ],
             "Boeuf": [
-                { id: 20, name: "Bœuf aux oignons", price: 9.90 },
-                { id: 21, name: "Bœuf au saté", price: 9.90 },
-                { id: 22, name: "Bœuf à la citronnelle", price: 9.90 },
-                { id: 23, name: "Bœuf au curry", price: 9.90 },
-                { id: 24, name: "Bœuf Lok Lak", price: 9.50 },
-                { id: 25, name: "Bo Bun nems & bœuf", price: 13.50 }
+                { id: 1, name: "Bœuf au saté", price: 9.90 },
+                { id: 2, name: "Bœuf au curry", price: 9.90 },
+                { id: 3, name: "Bœuf aux oignons", price: 9.90 },
+                { id: 4, name: "Bœuf à la citronnelle", price: 9.90 },
+                { id: 5, name: "Bœuf aux 5 épices", price: 9.90 },
+                { id: 6, name: "Bœuf aux noix de cajou", price: 9.90 },
+                { id: 7, name: "Bœuf aux amandes", price: 9.90 },
+                { id: 8, name: "Bœuf aux champignons parfumés", price: 9.90 },
+                { id: 9, name: "Bœuf aux pousses de bambou et champignons", price: 9.90 },
+                { id: 10, name: "Bœuf sauté légumes Asiatiques", price: 9.90 },
+                { id: 11, name: "Nouilles sautées au bœuf", price: 11.50 }
             ],
             "Poulet": [
-                { id: 30, name: "Poulet au caramel", price: 9.00 },
-                { id: 31, name: "Poulet au curry", price: 9.00 },
-                { id: 32, name: "Poulet à la citronnelle", price: 9.00 },
-                { id: 33, name: "Poulet aigre-doux", price: 9.00 },
-                { id: 34, name: "Poulet gingembre", price: 9.00 }
+                { id: 20, name: "Poulet au caramel", price: 9.00 },
+                { id: 21, name: "Poulet au curry", price: 9.00 },
+                { id: 22, name: "Poulet sauté aux légumes", price: 9.00 },
+                { id: 23, name: "Poulet sauté champignons parfumés", price: 9.00 },
+                { id: 24, name: "Poulet piquant", price: 9.00 },
+                { id: 25, name: "Poulet pousses de bambou & champ.", price: 9.00 },
+                { id: 26, name: "Poulet au gingembre", price: 9.00 },
+                { id: 27, name: "Poulet aux noix de cajou", price: 9.00 },
+                { id: 28, name: "Poulet aux amandes", price: 9.00 },
+                { id: 29, name: "Poulet à la citronnelle", price: 9.00 },
+                { id: 30, name: "Poulet à l’ananas", price: 9.00 },
+                { id: 31, name: "Poulet sauce aigre-doux", price: 9.00 },
+                { id: 32, name: "Poulet 5 épices", price: 9.00 },
+                { id: 33, name: "Nouilles sautées au poulet", price: 11.50 }
             ],
             "Porc": [
                 { id: 40, name: "Porc au caramel", price: 9.00 },
                 { id: 41, name: "Porc au curry", price: 9.00 },
-                { id: 42, name: "Porc aigre-doux", price: 9.00 },
-                { id: 43, name: "Porc à la citronnelle", price: 9.00 },
-                { id: 44, name: "Porc piquant", price: 9.00 }
+                { id: 42, name: "Porc sauté aux légumes", price: 9.00 },
+                { id: 43, name: "Porc aux champignons parfumés", price: 9.00 },
+                { id: 44, name: "Porc piquant", price: 9.00 },
+                { id: 45, name: "Porc pousses de bambou & champ.", price: 9.00 },
+                { id: 46, name: "Porc au gingembre", price: 9.00 },
+                { id: 47, name: "Porc aux noix de cajou", price: 9.00 },
+                { id: 48, name: "Porc aux amandes", price: 9.00 },
+                { id: 49, name: "Porc à la citronnelle", price: 9.00 },
+                { id: 50, name: "Porc à l’ananas", price: 9.00 },
+                { id: 51, name: "Porc sauce aigre-doux", price: 9.00 },
+                { id: 52, name: "Porc 5 épices", price: 9.00 }
             ],
             "Canard": [
-                { id: 50, name: "Canard laqué", price: 9.90 },
-                { id: 51, name: "Canard à l'ananas", price: 9.90 },
-                { id: 52, name: "Canard piquant", price: 9.90 },
-                { id: 53, name: "Canard champignons parfumés", price: 9.90 }
+                { id: 60, name: "Canard laqué", price: 9.90 },
+                { id: 61, name: "Canard pousses de bambou & champ.", price: 9.90 },
+                { id: 62, name: "Canard piquant", price: 9.90 },
+                { id: 63, name: "Canard aux champignons parfumés", price: 9.90 },
+                { id: 64, name: "Canard à l’ananas", price: 9.90 },
+                { id: 65, name: "Canard amandes et petits-pois", price: 9.90 }
             ],
             "Calamar": [
-                { id: 60, name: "Calamars piquant", price: 9.00 },
-                { id: 61, name: "Calamars au curry", price: 9.00 },
-                { id: 62, name: "Calamars aigre-doux", price: 9.00 },
-                { id: 63, name: "Calamars sautés légumes", price: 9.00 },
-                { id: 64, name: "Nouilles sautées aux calamars", price: 11.50 }
+                { id: 70, name: "Calamars piquant", price: 9.00 },
+                { id: 71, name: "Calamars au curry", price: 9.00 },
+                { id: 72, name: "Calamars aigre-doux", price: 9.00 },
+                { id: 73, name: "Calamars sautés légumes Asiatiques", price: 9.00 },
+                { id: 74, name: "Calamars sautés champignons parfumés", price: 9.00 },
+                { id: 75, name: "Calamars pousses de bambou & champ.", price: 9.00 },
+                { id: 76, name: "Nouilles sautées aux calamars", price: 11.50 }
             ],
             "Crevettes": [
-                { id: 70, name: "Crevettes au curry", price: 9.90 },
-                { id: 71, name: "Crevettes piquantes", price: 9.90 },
-                { id: 72, name: "Crevettes aigre-doux", price: 9.90 },
-                { id: 73, name: "Crevettes sautées à l'ail", price: 12.00 },
-                { id: 74, name: "Crevettes grillées sel & poivre", price: 9.50 },
-                { id: 75, name: "Nouilles sautées aux crevettes", price: 12.50 }
+                { id: 80, name: "Crevettes au curry", price: 9.90 },
+                { id: 81, name: "Crevettes piquantes", price: 9.90 },
+                { id: 82, name: "Crevettes aigre-doux", price: 9.90 },
+                { id: 83, name: "Crevettes sautées légumes Asiatiques", price: 9.90 },
+                { id: 84, name: "Nouilles sautées aux crevettes", price: 12.50 }
             ],
-            "Riz & Nouilles": [
-                { id: 80, name: "Riz nature", price: 3.00 },
-                { id: 81, name: "Riz cantonnais", price: 4.00 },
-                { id: 82, name: "Nouilles nature", price: 3.00 },
-                { id: 83, name: "Nouilles sautées aux légumes", price: 8.50 }
+            "Entrées": [
+                { id: 90, name: "Nems au porc (4p)", price: 6.00 },
+                { id: 91, name: "Nems Maison (3p)", price: 5.80 },
+                { id: 92, name: "Nems aux crevettes (5p)", price: 5.80 },
+                { id: 93, name: "Samoussas (3p)", price: 5.80 },
+                { id: 94, name: "Tempura aux crevettes (7p)", price: 5.50 },
+                { id: 95, name: "Raviolis frits (5p)", price: 5.80 },
+                { id: 96, name: "Raviolis porc & crevettes vapeur (5p)", price: 5.80 },
+                { id: 97, name: "Salade crevettes", price: 7.50 },
+                { id: 98, name: "Salade Viet (porc laqué)", price: 7.50 },
+                { id: 99, name: "Salade bœuf", price: 7.50 },
+                { id: 100, name: "Assiette Assortie", price: 9.50 }
+            ],
+            "Riz & Accompagnements": [
+                { id: 110, name: "Légumes Asiatiques", price: 7.00 },
+                { id: 111, name: "Riz nature", price: 3.00 },
+                { id: 112, name: "Riz cantonnais", price: 4.00 },
+                { id: 113, name: "Nouilles nature", price: 3.00 },
+                { id: 114, name: "Nouilles Légumes", price: 8.50 }
             ],
             "Desserts": [
-                { id: 90, name: "Beignet de banane", price: 4.50 },
-                { id: 91, name: "Beignet de pomme", price: 4.50 },
-                { id: 92, name: "Beignet d'ananas", price: 4.50 },
-                { id: 93, name: "Nougats mous", price: 3.50 },
-                { id: 94, name: "Nougats durs", price: 3.50 },
-                { id: 95, name: "Gingembre confit", price: 3.50 }
-            ],
-            "Boissons": [
-                { id: 100, name: "Soda 33cl", price: 2.60 },
-                { id: 101, name: "Eau minérale 50cl", price: 2.60 },
-                { id: 102, name: "Eau gazeuse 50cl", price: 2.60 },
-                { id: 103, name: "Jus exotique", price: 3.60 }
+                { id: 120, name: "Beignet de banane", price: 4.50 },
+                { id: 121, name: "Beignet de pomme", price: 4.50 },
+                { id: 122, name: "Beignet d'ananas", price: 4.50 },
+                { id: 123, name: "Nougats mous", price: 3.50 },
+                { id: 124, name: "Nougats durs", price: 3.50 },
+                { id: 125, name: "Gingembre confit", price: 3.50 }
             ]
         };
 
@@ -713,7 +732,7 @@
             years: {}
         };
 
-        let currentCategory = "Entrées";
+        let currentCategory = "Boeuf";
         let currentTable = "Table 01";
         let currentTicket = [];
         let currentFontSize = 15;
@@ -738,6 +757,7 @@
                 document.getElementById('navCaisse').classList.add('active');
                 initMenu();
             } else if (view === 'admin') {
+                document.getElementById('adminView').classList.add('hidden'); // keep admin safe or active
                 document.getElementById('adminView').classList.remove('hidden');
                 document.getElementById('navAdmin').classList.add('active');
                 initAdminTable();
@@ -750,7 +770,7 @@
 
         function initMenu() {
             const platsCategories = ["Boeuf", "Poulet", "Porc", "Canard", "Calamar", "Crevettes"];
-            const othersCategories = ["Entrées", "Riz & Nouilles", "Desserts", "Boissons"];
+            const othersCategories = ["Entrées", "Riz & Accompagnements", "Desserts"];
 
             const containerPlats = document.getElementById('categoryContainerPlats');
             const containerOthers = document.getElementById('categoryContainerOthers');
