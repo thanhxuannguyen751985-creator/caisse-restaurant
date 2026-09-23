@@ -431,7 +431,6 @@
         }
         .table-opt:hover { background: #3182ce; color: white; border-color: #3182ce; }
 
-        /* PHẦN ĐẶC BIỆT CHỈ DÙNG KHI IN HÓA ĐƠN */
         #printReceiptArea {
             display: none;
         }
@@ -486,23 +485,28 @@
 
         <!-- View 2: Admin Menu Management -->
         <div class="view-section hidden" id="adminView">
-            <div class="admin-header">Gestion du Menu (Thêm / Sửa món ăn)</div>
+            <div class="admin-header">Gestion du Menu</div>
             <div class="form-group">
                 <label>Tên món ăn</label>
-                <input type="text" id="newProdName" placeholder="Ví dụ: Bò Bún">
+                <input type="text" id="newProdName" placeholder="Ví dụ: Calamar sautés">
             </div>
             <div class="form-group">
                 <label>Danh mục</label>
                 <select id="newProdCat">
                     <option value="Entrées">Entrées</option>
-                    <option value="Plats">Plats</option>
+                    <option value="Boeuf">Boeuf</option>
+                    <option value="Poulet">Poulet</option>
+                    <option value="Porc">Porc</option>
+                    <option value="Canard">Canard</option>
+                    <option value="Calamar & Crevettes">Calamar & Crevettes</option>
+                    <option value="Riz & Nouilles">Riz & Nouilles</option>
                     <option value="Desserts">Desserts</option>
                     <option value="Boissons">Boissons</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>Giá tiền (€)</label>
-                <input type="number" step="0.1" id="newProdPrice" placeholder="12.50">
+                <input type="number" step="0.1" id="newProdPrice" placeholder="10.50">
             </div>
             <button class="btn-primary" onclick="addProduct()">Ajouter le produit</button>
 
@@ -519,9 +523,9 @@
             </table>
         </div>
 
-        <!-- View 3: Statistics / Thống kê doanh thu -->
+        <!-- View 3: Statistics -->
         <div class="view-section hidden" id="statsView">
-            <div class="stats-header">Tableau de Bord - Chiffre d'Affaires (Doanh thu)</div>
+            <div class="stats-header">Tableau de Bord - Chiffre d'Affaires</div>
             
             <div class="stats-grid">
                 <div class="stat-card">
@@ -580,7 +584,7 @@
 
     </div>
 
-    <!-- Hóa đơn chuẩn dùng riêng cho máy in -->
+    <!-- Hóa đơn chuẩn in ấn -->
     <div id="printReceiptArea">
         <div style="text-align: center; font-weight: bold; font-size: 18px;">RESTAURANT VIETNAMIEN TOURNON</div>
         <div style="text-align: center; font-size: 12px; margin-bottom: 10px;">Caisse Enregistreuse Pro</div>
@@ -606,7 +610,7 @@
     </div>
 
     <script>
-        // Thực đơn chuẩn tích hợp từ trang web của quán tại Tournon
+        // Thực đơn đã phân loại chi tiết theo danh mục: Entrées, Boeuf, Poulet, Porc, Canard, Calamar, v.v.
         let menuData = {
             "Entrées": [
                 { id: 1, name: "Nems au porc (4p)", price: 6.00 },
@@ -615,40 +619,60 @@
                 { id: 4, name: "Samoussas (3p)", price: 5.80 },
                 { id: 5, name: "Tempura aux crevettes (7p)", price: 5.50 },
                 { id: 6, name: "Raviolis frits (5p)", price: 5.80 },
-                { id: 7, name: "Raviolis porc & crevettes vapeur", price: 5.80 },
+                { id: 7, name: "Raviolis vapeur", price: 5.80 },
                 { id: 8, name: "Salade crevettes", price: 7.50 },
                 { id: 9, name: "Salade porc laqué", price: 7.50 },
                 { id: 10, name: "Salade bœuf", price: 7.50 },
                 { id: 11, name: "Salade poulet", price: 7.50 },
                 { id: 12, name: "Assiette Assortie", price: 9.50 }
             ],
-            "Plats": [
-                { id: 20, name: "Porc au caramel", price: 9.00 },
-                { id: 21, name: "Porc au curry", price: 9.00 },
-                { id: 22, name: "Poulet au caramel", price: 9.00 },
-                { id: 23, name: "Poulet au curry", price: 9.00 },
-                { id: 24, name: "Poulet à la citronnelle", price: 9.00 },
-                { id: 25, name: "Bœuf aux oignons", price: 9.90 },
-                { id: 26, name: "Bœuf au saté", price: 9.90 },
-                { id: 27, name: "Bœuf à la citronnelle", price: 9.90 },
-                { id: 28, name: "Crevettes au curry", price: 9.90 },
-                { id: 29, name: "Crevettes aigre-doux", price: 9.90 },
-                { id: 30, name: "Canard laqué", price: 9.90 },
-                { id: 31, name: "Nouilles sautées bœuf", price: 11.50 },
-                { id: 32, name: "Riz cantonnais", price: 4.00 }
+            "Boeuf": [
+                { id: 20, name: "Bœuf aux oignons", price: 9.90 },
+                { id: 21, name: "Bœuf au saté", price: 9.90 },
+                { id: 22, name: "Bœuf à la citronnelle", price: 9.90 },
+                { id: 23, name: "Bœuf aux poivrons", price: 9.90 }
+            ],
+            "Poulet": [
+                { id: 30, name: "Poulet au caramel", price: 9.00 },
+                { id: 31, name: "Poulet au curry", price: 9.00 },
+                { id: 32, name: "Poulet à la citronnelle", price: 9.00 },
+                { id: 33, name: "Poulet piquant", price: 9.00 }
+            ],
+            "Porc": [
+                { id: 40, name: "Porc au caramel", price: 9.00 },
+                { id: 41, name: "Porc au curry", price: 9.00 },
+                { id: 42, name: "Porc aigre-doux", price: 9.00 }
+            ],
+            "Canard": [
+                { id: 50, name: "Canard laqué", price: 10.50 },
+                { id: 51, name: "Canard aux ananas", price: 10.50 },
+                { id: 52, name: "Canard gingembre", price: 10.50 }
+            ],
+            "Calamar & Crevettes": [
+                { id: 60, name: "Calamar sautés oignons", price: 10.50 },
+                { id: 61, name: "Calamar sel & poivre", price: 10.50 },
+                { id: 62, name: "Calamar au curry / saté", price: 10.50 },
+                { id: 63, name: "Crevettes au curry", price: 9.90 },
+                { id: 64, name: "Crevettes aigre-doux", price: 9.90 },
+                { id: 65, name: "Crevettes sel & poivre", price: 9.90 }
+            ],
+            "Riz & Nouilles": [
+                { id: 70, name: "Riz cantonnais", price: 4.00 },
+                { id: 71, name: "Nouilles sautées nature", price: 5.00 },
+                { id: 72, name: "Nouilles sautées poulet/bœuf", price: 11.50 }
             ],
             "Desserts": [
-                { id: 40, name: "Beignet de banane", price: 4.50 },
-                { id: 41, name: "Beignet de pomme", price: 4.50 },
-                { id: 42, name: "Beignet d'ananas", price: 4.50 },
-                { id: 43, name: "Nougats mou", price: 3.50 },
-                { id: 44, name: "Gingembre confit", price: 3.50 }
+                { id: 80, name: "Beignet de banane", price: 4.50 },
+                { id: 81, name: "Beignet de pomme", price: 4.50 },
+                { id: 82, name: "Beignet d'ananas", price: 4.50 },
+                { id: 83, name: "Nougats mous", price: 3.50 },
+                { id: 84, name: "Gingembre confit", price: 3.50 }
             ],
             "Boissons": [
-                { id: 50, name: "Coca-Cola 33cl", price: 4.00 },
-                { id: 51, name: "Bière Asiatique", price: 4.50 },
-                { id: 52, name: "Eau minérale 50cl", price: 3.00 },
-                { id: 53, name: "Thé / Café", price: 2.50 }
+                { id: 90, name: "Coca-Cola 33cl", price: 4.00 },
+                { id: 91, name: "Bière Asiatique", price: 4.50 },
+                { id: 92, name: "Eau minérale 50cl", price: 3.00 },
+                { id: 93, name: "Thé / Café", price: 2.50 }
             ]
         };
 
